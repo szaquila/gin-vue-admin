@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/initialize"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
@@ -10,6 +11,7 @@ import (
 
 type server interface {
 	ListenAndServe() error
+	ListenAndServeTLS(certFile string, keyFile string) error
 }
 
 func RunWindowsServer() {
@@ -53,5 +55,9 @@ func RunWindowsServer() {
 	** 版权持有公司：北京翻转极光科技有限责任公司 **
 	** 剔除授权标识需购买商用授权：https://gin-vue-admin.com/empower/index.html **
 `, address)
-	global.GVA_LOG.Error(s.ListenAndServe().Error())
+	if !global.GVA_CONFIG.System.UseTls {
+		global.GVA_LOG.Error(s.ListenAndServe().Error())
+	} else {
+		global.GVA_LOG.Error(s.ListenAndServeTLS(global.GVA_CONFIG.System.TlsCert, global.GVA_CONFIG.System.TlsKey).Error())
+	}
 }

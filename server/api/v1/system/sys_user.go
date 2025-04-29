@@ -1,6 +1,7 @@
 package system
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -13,6 +14,8 @@ import (
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/pquerna/otp"
+	"github.com/pquerna/otp/totp"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
@@ -41,15 +44,17 @@ func (b *BaseApi) Login(c *gin.Context) {
 
 	// 判断验证码是否开启
 	openCaptcha := global.GVA_CONFIG.Captcha.OpenCaptcha               // 是否开启防爆次数
+	enableOtp := global.GVA_CONFIG.Otp.Enable                          // 是否开启OTP
 	openCaptchaTimeOut := global.GVA_CONFIG.Captcha.OpenCaptchaTimeOut // 缓存超时时间
 	v, ok := global.BlackCache.Get(key)
 	if !ok {
 		global.BlackCache.Set(key, 1, time.Second*time.Duration(openCaptchaTimeOut))
 	}
 
-	var oc bool = openCaptcha == 0 || openCaptcha < interfaceToInt(v)
+	oc := openCaptcha == 0 || openCaptcha < interfaceToInt(v)
 
-	if !oc || (l.CaptchaId != "" && l.Captcha != "" && store.Verify(l.CaptchaId, l.Captcha, true)) {
+	// 如果没有开启验证码或者验证通过
+	if !oc || (l.Captcha != "" && (!enableOtp && l.CaptchaId != "" && store.Verify(l.CaptchaId, l.Captcha, true)) || (enableOtp && OtpVerify(l.Captcha))) {
 		u := &system.SysUser{Username: l.Username, Password: l.Password}
 		user, err := userService.Login(u)
 		if err != nil {
@@ -93,7 +98,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 	}
 
 	if jwtStr, err := jwtService.GetRedisJWT(user.Username); err == redis.Nil {
-		if err := jwtService.SetRedisJWT(token, user.Username); err != nil {
+		if err = jwtService.SetRedisJWT(token, user.Username); err != nil {
 			global.GVA_LOG.Error("设置登录状态失败!", zap.Error(err))
 			response.FailWithMessage("设置登录状态失败", c)
 			return
@@ -480,4 +485,45 @@ func (b *BaseApi) ResetPassword(c *gin.Context) {
 		return
 	}
 	response.OkWithMessage("重置成功", c)
+}
+
+// OtpVerify OTP验证
+func OtpVerify(code string) bool {
+	if global.GVA_CONFIG.Otp.Secret == "" {
+		return false
+	}
+	rv, _ := totp.ValidateCustom(code, global.GVA_CONFIG.Otp.Secret, time.Now(), totp.ValidateOpts{
+		Period:    180,
+		Skew:      1,
+		Digits:    otp.DigitsSix,
+		Algorithm: otp.AlgorithmSHA1,
+	})
+	return rv
+}
+
+// OtpGet 获取OTP
+func OtpGet() string {
+	if global.GVA_CONFIG.Otp.Secret == "" {
+		return ""
+	}
+	// totp := otpgen.TOTP{
+	//      Secret:    OtpSecret(),
+	//      Digits:    6,                 //(optional) (default: 6)
+	//      Algorithm: "SHA1",            //(optional) (default: SHA1)
+	//      Period:    180,               //(optional) (default: 30)
+	//      UnixTime:  time.Now().Unix(), //(optional) (default: Current Unix Time)
+	// }
+	// password, err := totp.Generate()
+	password, err := totp.GenerateCodeCustom(global.GVA_CONFIG.Otp.Secret, time.Now(), totp.ValidateOpts{
+		Period:    180,
+		Skew:      1,
+		Digits:    otp.DigitsSix,
+		Algorithm: otp.AlgorithmSHA1,
+	})
+	if err == nil {
+		return password
+	} else {
+		fmt.Println(err.Error())
+	}
+	return ""
 }

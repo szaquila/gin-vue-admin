@@ -9,6 +9,8 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import VueFilePathPlugin from './vitePlugin/componentName/index.js'
 import { svgBuilder } from 'vite-auto-import-svg'
 import { AddSecret } from './vitePlugin/secret'
+import basicSSL from '@vitejs/plugin-basic-ssl'
+
 // @see https://cn.vitejs.dev/config/
 export default ({ mode }) => {
   AddSecret('')
@@ -42,9 +44,9 @@ export default ({ mode }) => {
     }
   }
 
-  const base = "/"
-  const root = "./"
-  const outDir = "dist"
+  const base = '/'
+  const root = './'
+  const outDir = 'dist'
 
   const config = {
     base: base, // 编译后js导入的资源路径
@@ -65,7 +67,7 @@ export default ({ mode }) => {
     },
     server: {
       // 如果使用docker-compose开发模式，设置为false
-      open: true,
+      // open: true,
       port: process.env.VITE_CLI_PORT,
       proxy: {
         // 把key的路径代理到target位置
@@ -75,7 +77,8 @@ export default ({ mode }) => {
           target: `${process.env.VITE_BASE_PATH}:${process.env.VITE_SERVER_PORT}/`, // 代理到 目标路径
           changeOrigin: true,
           rewrite: (path) =>
-            path.replace(new RegExp('^' + process.env.VITE_BASE_API), '')
+            path.replace(new RegExp('^' + process.env.VITE_BASE_API), ''),
+          secure: false
         }
       }
     },
@@ -108,8 +111,15 @@ export default ({ mode }) => {
           'Edge >= 15'
         ]
       }),
+      basicSSL(),
       vuePlugin(),
-      svgBuilder(['./src/plugin/','./src/assets/icons/'],base, outDir,'assets', NODE_ENV),
+      svgBuilder(
+        ['./src/plugin/', './src/assets/icons/'],
+        base,
+        outDir,
+        'assets',
+        NODE_ENV
+      ),
       [Banner(`\n Build based on gin-vue-admin \n Time : ${timestamp}`)],
       VueFilePathPlugin('./src/pathInfo.json')
     ]

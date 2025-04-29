@@ -74,6 +74,7 @@
         />
         <el-table-column align="left" fixed="right" label="操作" :min-width="appStore.operateMinWith">
           <template #default="scope">
+            <div style="white-space: nowrap;">
             <el-button
               type="primary"
               link
@@ -98,6 +99,7 @@
             >
               删除
             </el-button>
+          </div>
           </template>
         </el-table-column>
       </el-table>

@@ -13,9 +13,9 @@ import (
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 // Author [ByteZhou-2018](https://github.com/ByteZhou-2018)
-func GormMysql() *gorm.DB {
+func GormMysql() (*gorm.DB, func(string) gorm.Dialector, config.GeneralDB) {
 	m := global.GVA_CONFIG.Mysql
-	return initMysqlDatabase(m)
+	return GormMysqlByConfig(m), mysql.Open, m.GeneralDB
 }
 
 // GormMysqlByConfig 通过传入配置初始化Mysql数据库

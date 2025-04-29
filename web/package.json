@@ -55,6 +55,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.25.1",
     "@eslint/js": "^8.56.0",
+    "@vitejs/plugin-basic-ssl": "^2.0.0",
     "@vitejs/plugin-legacy": "^6.0.0",
     "@vitejs/plugin-vue": "^5.0.3",
     "@vue/cli-plugin-babel": "~5.0.8",
@@ -71,6 +72,7 @@
     "eslint-plugin-vue": "^9.19.2",
     "sass": "^1.78.0",
     "terser": "^5.31.6",
+    "typescript": "^5.8.3",
     "vite": "^6.2.3",
     "vite-plugin-banner": "^0.8.0",
     "vite-plugin-importer": "^0.2.5",

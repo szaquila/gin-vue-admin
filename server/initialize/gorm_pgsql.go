@@ -11,9 +11,9 @@ import (
 // GormPgSql 初始化 Postgresql 数据库
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
-func GormPgSql() *gorm.DB {
+func GormPgSql() (*gorm.DB, func(string) gorm.Dialector, config.GeneralDB) {
 	p := global.GVA_CONFIG.Pgsql
-	return initPgSqlDatabase(p)
+	return GormPgSqlByConfig(p), postgres.Open, p.GeneralDB
 }
 
 // GormPgSqlByConfig 初始化 Postgresql 数据库 通过指定参数

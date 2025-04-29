@@ -16,18 +16,14 @@
           <el-input v-model="searchInfo.email" placeholder="邮箱" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="search" @click="onSubmit">
-            查询
-          </el-button>
+          <el-button type="primary" icon="search" @click="onSubmit"> 查询 </el-button>
           <el-button icon="refresh" @click="onReset"> 重置 </el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="gva-table-box">
       <div class="gva-btn-list">
-        <el-button type="primary" icon="plus" @click="addUser"
-          >新增用户</el-button
-        >
+        <el-button type="primary" icon="plus" @click="addUser">新增用户</el-button>
       </div>
       <el-table :data="tableData" row-key="ID">
         <el-table-column align="left" label="头像" min-width="75">
@@ -36,30 +32,10 @@
           </template>
         </el-table-column>
         <el-table-column align="left" label="ID" min-width="50" prop="ID" />
-        <el-table-column
-          align="left"
-          label="用户名"
-          min-width="150"
-          prop="userName"
-        />
-        <el-table-column
-          align="left"
-          label="昵称"
-          min-width="150"
-          prop="nickName"
-        />
-        <el-table-column
-          align="left"
-          label="手机号"
-          min-width="180"
-          prop="phone"
-        />
-        <el-table-column
-          align="left"
-          label="邮箱"
-          min-width="180"
-          prop="email"
-        />
+        <el-table-column align="left" label="用户名" min-width="150" prop="userName" />
+        <el-table-column align="left" label="昵称" min-width="150" prop="nickName" />
+        <el-table-column align="left" label="手机号" min-width="180" prop="phone" />
+        <el-table-column align="left" label="邮箱" min-width="180" prop="email" />
         <el-table-column align="left" label="用户角色" min-width="200">
           <template #default="scope">
             <el-cascader
@@ -91,43 +67,15 @@
         </el-table-column>
         <el-table-column align="left" label="启用" min-width="150">
           <template #default="scope">
-            <el-switch
-              v-model="scope.row.enable"
-              inline-prompt
-              :active-value="1"
-              :inactive-value="2"
-              @change="
-                () => {
-                  switchEnable(scope.row)
-                }
-              "
-            />
+            <el-switch v-model="scope.row.enable" inline-prompt :active-value="1" :inactive-value="2" @change="switchEnable(scope.row)" />
           </template>
         </el-table-column>
 
         <el-table-column label="操作" :min-width="appStore.operateMinWith" fixed="right">
           <template #default="scope">
-            <el-button
-              type="primary"
-              link
-              icon="delete"
-              @click="deleteUserFunc(scope.row)"
-              >删除</el-button
-            >
-            <el-button
-              type="primary"
-              link
-              icon="edit"
-              @click="openEdit(scope.row)"
-              >编辑</el-button
-            >
-            <el-button
-              type="primary"
-              link
-              icon="magic-stick"
-              @click="resetPasswordFunc(scope.row)"
-              >重置密码</el-button
-            >
+            <el-button type="primary" link icon="delete" @click="deleteUserFunc(scope.row)">删除</el-button>
+            <el-button type="primary" link icon="edit" @click="openEdit(scope.row)">编辑</el-button>
+            <el-button type="primary" link icon="magic-stick" @click="resetPasswordFunc(scope.row)">重置密码</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -144,13 +92,7 @@
       </div>
     </div>
     <!-- 重置密码对话框 -->
-    <el-dialog
-      v-model="resetPwdDialog"
-      title="重置密码"
-      width="500px"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
+    <el-dialog v-model="resetPwdDialog" title="重置密码" width="500px" :close-on-click-modal="false" :close-on-press-escape="false">
       <el-form :model="resetPwdInfo" ref="resetPwdForm" label-width="100px">
         <el-form-item label="用户账号">
           <el-input v-model="resetPwdInfo.userName" disabled />
@@ -161,9 +103,7 @@
         <el-form-item label="新密码">
           <div class="flex w-full">
             <el-input class="flex-1" v-model="resetPwdInfo.password" placeholder="请输入新密码" show-password />
-            <el-button type="primary" @click="generateRandomPassword" style="margin-left: 10px">
-              生成随机密码
-            </el-button>
+            <el-button type="primary" @click="generateRandomPassword" style="margin-left: 10px"> 生成随机密码 </el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -174,37 +114,20 @@
         </div>
       </template>
     </el-dialog>
-    
-    <el-drawer
-      v-model="addUserDialog"
-      :size="appStore.drawerSize"
-      :show-close="false"
-      :close-on-press-escape="false"
-      :close-on-click-modal="false"
-    >
+
+    <el-drawer v-model="addUserDialog" :size="appStore.drawerSize" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false">
       <template #header>
         <div class="flex justify-between items-center">
           <span class="text-lg">用户</span>
           <div>
             <el-button @click="closeAddUserDialog">取 消</el-button>
-            <el-button type="primary" @click="enterAddUserDialog"
-              >确 定</el-button
-            >
+            <el-button type="primary" @click="enterAddUserDialog">确 定</el-button>
           </div>
         </div>
       </template>
 
-      <el-form
-        ref="userForm"
-        :rules="rules"
-        :model="userInfo"
-        label-width="80px"
-      >
-        <el-form-item
-          v-if="dialogFlag === 'add'"
-          label="用户名"
-          prop="userName"
-        >
+      <el-form ref="userForm" :rules="rules" :model="userInfo" label-width="80px">
+        <el-form-item v-if="dialogFlag === 'add'" label="用户名" prop="userName">
           <el-input v-model="userInfo.userName" />
         </el-form-item>
         <el-form-item v-if="dialogFlag === 'add'" label="密码" prop="password">
@@ -237,12 +160,7 @@
           />
         </el-form-item>
         <el-form-item label="启用" prop="disabled">
-          <el-switch
-            v-model="userInfo.enable"
-            inline-prompt
-            :active-value="1"
-            :inactive-value="2"
-          />
+          <el-switch v-model="userInfo.enable" inline-prompt :active-value="1" :inactive-value="2" />
         </el-form-item>
         <el-form-item label="头像" label-width="80px">
           <SelectImage v-model="userInfo.headerImg" />
@@ -253,12 +171,7 @@
 </template>
 
 <script setup>
-  import {
-    getUserList,
-    setUserAuthorities,
-    register,
-    deleteUser
-  } from '@/api/user'
+  import { getUserList, setUserAuthorities, register, deleteUser } from '@/api/user'
 
   import { getAuthorityList } from '@/api/authority'
   import CustomPic from '@/components/customPic/index.vue'
@@ -268,7 +181,7 @@
   import { nextTick, ref, watch } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import SelectImage from '@/components/selectImage/selectImage.vue'
-  import { useAppStore } from "@/pinia";
+  import { useAppStore } from '@/pinia'
 
   defineOptions({
     name: 'User'
@@ -373,7 +286,7 @@
     nickName: '',
     password: ''
   })
-  
+
   // 生成随机密码
   const generateRandomPassword = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
@@ -383,19 +296,22 @@
     }
     resetPwdInfo.value.password = password
     // 复制到剪贴板
-    navigator.clipboard.writeText(password).then(() => {
-      ElMessage({
-        type: 'success',
-        message: '密码已复制到剪贴板'
+    navigator.clipboard
+      .writeText(password)
+      .then(() => {
+        ElMessage({
+          type: 'success',
+          message: '密码已复制到剪贴板'
+        })
       })
-    }).catch(() => {
-      ElMessage({
-        type: 'error',
-        message: '复制失败，请手动复制'
+      .catch(() => {
+        ElMessage({
+          type: 'error',
+          message: '复制失败，请手动复制'
+        })
       })
-    })
   }
-  
+
   // 打开重置密码对话框
   const resetPasswordFunc = (row) => {
     resetPwdInfo.value.ID = row.ID
@@ -404,7 +320,7 @@
     resetPwdInfo.value.password = ''
     resetPwdDialog.value = true
   }
-  
+
   // 确认重置密码
   const confirmResetPassword = async () => {
     if (!resetPwdInfo.value.password) {
@@ -414,12 +330,12 @@
       })
       return
     }
-    
+
     const res = await resetPassword({
       ID: resetPwdInfo.value.ID,
       password: resetPwdInfo.value.password
     })
-    
+
     if (res.code === 0) {
       ElMessage({
         type: 'success',
@@ -433,7 +349,7 @@
       })
     }
   }
-  
+
   // 关闭重置密码对话框
   const closeResetPwdDialog = () => {
     resetPwdInfo.value.password = ''
@@ -505,9 +421,7 @@
         trigger: 'blur'
       }
     ],
-    authorityId: [
-      { required: true, message: '请选择用户角色', trigger: 'blur' }
-    ]
+    authorityId: [{ required: true, message: '请选择用户角色', trigger: 'blur' }]
   })
   const userForm = ref(null)
   const enterAddUserDialog = async () => {

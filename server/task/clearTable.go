@@ -3,10 +3,10 @@ package task
 import (
 	"errors"
 	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common"
 	"time"
 
-	"gorm.io/gorm"
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common"
 )
 
 //@author: [songzhibin97](https://github.com/songzhibin97)
@@ -15,7 +15,8 @@ import (
 //@param: db(数据库对象) *gorm.DB, tableName(表名) string, compareField(比较字段) string, interval(间隔) string
 //@return: error
 
-func ClearTable(db *gorm.DB) error {
+func ClearTable() error {
+	db := global.GVA_DB
 	var ClearTableDetail []common.ClearDB
 
 	ClearTableDetail = append(ClearTableDetail, common.ClearDB{

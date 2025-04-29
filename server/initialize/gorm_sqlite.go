@@ -9,9 +9,9 @@ import (
 )
 
 // GormSqlite 初始化Sqlite数据库
-func GormSqlite() *gorm.DB {
+func GormSqlite() (*gorm.DB, func(string) gorm.Dialector, config.GeneralDB) {
 	s := global.GVA_CONFIG.Sqlite
-	return initSqliteDatabase(s)
+	return GormSqliteByConfig(s), sqlite.Open, s.GeneralDB
 }
 
 // GormSqliteByConfig 初始化Sqlite数据库用过传入配置
